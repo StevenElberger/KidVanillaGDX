@@ -1,0 +1,2 @@
+java -classpath "C:\Users\Steve\Desktop\libgdx-nightly-latest\gdx.jar";"C:\Users\Steve\Desktop\libgdx-nightly-latest\extensions\gdx-tools\gdx-tools.jar";"C:\Users\Steve\Desktop\libgdx-nightly-latest\extensions\gdx-tiled-preprocessor\gdx-tiled-preprocessor.jar" com.badlogic.gdx.tools.imagepacker.TexturePacker2 "C:\Users\Steve\workspace\KidVanillaGDX-android\images" "C:\Users\Steve\workspace\KidVanillaGDX-android\assets\maps"
+pause
