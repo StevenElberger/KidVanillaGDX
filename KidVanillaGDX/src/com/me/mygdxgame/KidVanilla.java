@@ -5,26 +5,20 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 public class KidVanilla implements ApplicationListener {
 	private TiledMap map;
+	private Player player;
 	private TiledMapRenderer renderer;
 	private OrthographicCamera camera;
-	//private Animation vanillaWalk;
-	//private Texture vanillaSheet;
-	//private TextureRegion[] vanillaFrames;
-	//private SpriteBatch spriteBatch;
-	//private TextureRegion currentFrame;
-	//private float stateTime;
-	private Player player;
 	
 	@Override
 	public void create() {		
@@ -33,12 +27,39 @@ public class KidVanilla implements ApplicationListener {
 		map = new TmxMapLoader().load("data/newmap.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1f / 16f);
 		
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 100, 100);
-		camera.position.set(5, 95, 0);	// Top left corner coords (0, 100)
-		camera.zoom = .2f;	// Smaller means larger zoom
+		//TiledMapTileLayer tiledLayer = (TiledMapTileLayer) map.getLayers().get(0);
+		//Cell cell = tiledLayer.getCell(0, 0);
+		//TiledMapTile tile = cell.getTile();
+		//tile.getProperties();
 		
 		player = new Player();
+		createCollisionArray();
+		
+		camera = new OrthographicCamera();
+		camera.setToOrtho(false, 100, 100);
+		camera.position.set(player.getX(), player.getY(), 0);	// Top left corner coords (0, 100)
+		camera.zoom = .2f;	// Smaller means larger zoom
+	}
+	
+	public void createCollisionArray() {
+		Cell cell;
+		TiledMapTile tile;
+		MapProperties mapProps;
+		TiledMapTileLayer tiledLayer = (TiledMapTileLayer) map.getLayers().get(0);
+		int xAxis = tiledLayer.getWidth();
+		int yAxis = tiledLayer.getHeight();
+		int dick = 0;
+		for (int i = 0; i < xAxis; i++) {
+			for (int j = 0; j < yAxis; j++) {
+				cell = tiledLayer.getCell(i, j);
+				tile = cell.getTile();
+				mapProps = tile.getProperties();
+				if (mapProps.get("blocked") == null) {
+					dick++;
+					System.out.println("Shitdick" + dick);
+				}
+			}
+		}
 	}
 
 	@Override

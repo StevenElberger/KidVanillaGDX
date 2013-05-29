@@ -16,8 +16,8 @@ public class Player {
 	private TextureRegion currentFrame;
 	
 	public Player() {
-		x = 200;
-		y = 320;
+		x = Gdx.graphics.getWidth() / 2;
+		y = Gdx.graphics.getHeight() / 2;
 		vanillaSheet = new Texture(Gdx.files.internal("vanillawalkrightsprite.png"));
 		TextureRegion[][] tmp = TextureRegion.split(vanillaSheet, 16, 16);
 		vanillaFrames = new TextureRegion[3];
@@ -28,6 +28,22 @@ public class Player {
 		vanillaWalk = new Animation(0.025f, vanillaFrames);
 		spriteBatch = new SpriteBatch();
 		stateTime = 0f;
+	}
+	
+	public float getX() {
+		return x;
+	}
+	
+	public float getY() {
+		return y;
+	}
+	
+	public void setX(float paramX) {
+		x = paramX;
+	}
+	
+	public void setY(float paramY) {
+		y = paramY;
 	}
 	
 	public void drawPlayer() {
