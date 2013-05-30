@@ -7,8 +7,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -31,23 +29,27 @@ public class KidVanilla implements ApplicationListener {
 	public void create() {		
 		//float w = Gdx.graphics.getWidth();
 		//float h = Gdx.graphics.getHeight();
+		
+		// load map and map renderer (set scale to 1/16)
 		map = new TmxMapLoader().load("data/newmap.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1f / 16f);
 		debug = false;
 		
+		// create the player character and load the collision blocks
 		player = new Player();
 		createCollisionArray();
 		
+		// create the orthographic camera, show 10x10 tiles
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 10, 10);
-		camera.position.set(2, 94, 0);	// Top left corner coords (0, 100)
+		camera.position.set(2, 94, 0);	// Top left corner is (0, 100)
 	}
 	
 	public void createCollisionArray() {
-		blocks = new ArrayList<Rectangle>();
-		TiledMapTileLayer tiledLayer = (TiledMapTileLayer) map.getLayers().get("map");
 		Cell cell;
 		TiledMapTile tile;
+		blocks = new ArrayList<Rectangle>();
+		TiledMapTileLayer tiledLayer = (TiledMapTileLayer) map.getLayers().get("map");
 		int xAxis = tiledLayer.getWidth();
 		int yAxis = tiledLayer.getHeight();
 		for (int i = 0; i < xAxis; i++) {
@@ -79,22 +81,18 @@ public class KidVanilla implements ApplicationListener {
 	}
 	
 	private void handleInput() {
-		//if (Gdx.input.isKeyPressed(Input.Keys.Z)) {
-		//	camera.zoom += 0.02;
-		//}
-		//if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-		//	camera.zoom -= 0.02;
-		//}
 		boolean leftDown = Gdx.input.isKeyPressed(Input.Keys.LEFT);
 		boolean rightDown = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+		boolean spaceDown = Gdx.input.isKeyPressed(Input.Keys.SPACE);
+		boolean dDown = Gdx.input.isKeyPressed(Input.Keys.D);
+		if (dDown) {
 			if (debug) {
 				debug = false;
 			} else {
 				debug = true;
 			}
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+		if (spaceDown) {
 			if ((player.getBound().moveVertical(blocks, 1f)) && !player.getJumping()) {
 				player.setJumping(true);
 				player.getVelocity().y = player.getMaxVelocity();
