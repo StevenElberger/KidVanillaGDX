@@ -1,11 +1,16 @@
 package com.me.mygdxgame;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Player {
@@ -20,6 +25,8 @@ public class Player {
 	private float width, height;
 	public State state;
 	private Boolean facingRight;
+	private BoundingBox bound;
+	private ShapeRenderer shapeRenderer;
 	
 	public enum State {
 		IDLE, WALKING, JUMPING
@@ -31,6 +38,8 @@ public class Player {
 		state = State.IDLE;
 		facingRight = true;
 		position = new Vector2(3,95);
+		bound = new BoundingBox(3.1f, 95, 0.8f, 1);
+		shapeRenderer = new ShapeRenderer();
 		vanillaSheet = new Texture(Gdx.files.internal("vanillawalkrightsprite.png"));
 		TextureRegion[][] tmp = TextureRegion.split(vanillaSheet, 16, 16);
 		vanillaWalkRightFrames = new TextureRegion[4];
@@ -66,6 +75,10 @@ public class Player {
 		return state;
 	}
 	
+	public BoundingBox getBound() {
+		return bound;
+	}
+	
 	public void setX(float paramX) {
 		position.x = paramX;
 	}
@@ -86,7 +99,7 @@ public class Player {
 		return facingRight;
 	}
 	
-	public void drawPlayer(OrthographicCamera camera) {
+	public void drawPlayer(OrthographicCamera camera, ArrayList<Rectangle> blocks, boolean debug) {
 		stateTime += Gdx.graphics.getDeltaTime();
 		if (this.state.equals(State.IDLE) && facingRight) {
 			currentFrame = vanillaWalkRightFrames[2];
@@ -94,11 +107,18 @@ public class Player {
 			currentFrame = vanillaWalkLeftFrames[2];
 		} else if (this.state.equals(State.WALKING) && facingRight) {
 			currentFrame = vanillaWalkRight.getKeyFrame(stateTime, true);
-		} else {
+		} else if (this.state.equals(State.WALKING) && !facingRight){
 			currentFrame = vanillaWalkLeft.getKeyFrame(stateTime, true);
 		}
-		
-		//currentFrame = vanillaWalk.getKeyFrame(stateTime, true);
+		if (debug) {
+			shapeRenderer.setProjectionMatrix(camera.combined);
+			shapeRenderer.begin(ShapeType.Line);
+			shapeRenderer.rect(bound.x, bound.y, bound.width, bound.height);
+			for (Rectangle rect : blocks) {
+				shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+			}
+			shapeRenderer.end();
+		}
 		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();
 		spriteBatch.draw(currentFrame, position.x, position.y, width, height);

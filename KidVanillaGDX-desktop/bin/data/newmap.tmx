@@ -7,13 +7,88 @@
     <property name="blocked" value="true"/>
    </properties>
   </tile>
+  <tile id="12">
+   <properties>
+    <property name="blocked" value="false"/>
+   </properties>
+  </tile>
+  <tile id="13">
+   <properties>
+    <property name="blocked" value="false"/>
+   </properties>
+  </tile>
+  <tile id="14">
+   <properties>
+    <property name="blocked" value="false"/>
+   </properties>
+  </tile>
+  <tile id="38">
+   <properties>
+    <property name="blocked" value="false"/>
+   </properties>
+  </tile>
+  <tile id="39">
+   <properties>
+    <property name="blocked" value="false"/>
+   </properties>
+  </tile>
+  <tile id="43">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="46">
+   <properties>
+    <property name="blocked" value="false"/>
+   </properties>
+  </tile>
+  <tile id="48">
+   <properties>
+    <property name="blocked" value="false"/>
+   </properties>
+  </tile>
+  <tile id="49">
+   <properties>
+    <property name="blocked" value="false"/>
+   </properties>
+  </tile>
+  <tile id="50">
+   <properties>
+    <property name="blocked" value="false"/>
+   </properties>
+  </tile>
+  <tile id="52">
+   <properties>
+    <property name="blocked" value="false"/>
+   </properties>
+  </tile>
+  <tile id="53">
+   <properties>
+    <property name="blocked" value="false"/>
+   </properties>
+  </tile>
+  <tile id="56">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="57">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
+  <tile id="65">
+   <properties>
+    <property name="blocked" value="true"/>
+   </properties>
+  </tile>
  </tileset>
  <tileset firstgid="67" name="collision" tilewidth="16" tileheight="16">
   <image source="../collision.png" trans="5555ff" width="16" height="16"/>
  </tileset>
  <layer name="map" width="100" height="100">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAC+3TMQqDQBAF0PUAMdjlBqYQQiIWlnr/Q2WELYJFSBVX9hWPYWaaz8A0KaWGolxCm11D99G3eX90xprcfnB0xprsb9+H+242FJCzFtu9H7k+wyuMuZ+SH/m3OSxfrAVkBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgDN4A6sRQ6pAnAAA
+   H4sIAAAAAAAAC+3TMQoCQQwF0JkD7HgMtxBExULLvf+hjJBqCrFyR+YVj/BTfQKppZTKUJbQ0qHLLfPeHWfSvrB3x5n0tz+GtdudBug5i/e9zzkv4Rpume/Fj/zaIzw/2AboCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/gBRRFlctAnAAA
   </data>
  </layer>
 </map>

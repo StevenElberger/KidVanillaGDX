@@ -22,6 +22,7 @@ import com.me.mygdxgame.Player.State;
 public class KidVanilla implements ApplicationListener {
 	private TiledMap map;
 	private Player player;
+	private boolean debug;
 	private TiledMapRenderer renderer;
 	private OrthographicCamera camera;
 	private ArrayList<Rectangle> blocks;
@@ -32,6 +33,7 @@ public class KidVanilla implements ApplicationListener {
 		//float h = Gdx.graphics.getHeight();
 		map = new TmxMapLoader().load("data/newmap.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1f / 16f);
+		debug = false;
 		
 		player = new Player();
 		createCollisionArray();
@@ -43,20 +45,18 @@ public class KidVanilla implements ApplicationListener {
 	}
 	
 	public void createCollisionArray() {
+		blocks = new ArrayList<Rectangle>();
+		TiledMapTileLayer tiledLayer = (TiledMapTileLayer) map.getLayers().get("map");
 		Cell cell;
 		TiledMapTile tile;
-		MapProperties mapProps;
-		blocks = new ArrayList<Rectangle>();
-		TiledMapTileLayer tiledLayer = (TiledMapTileLayer) map.getLayers().get(0);
 		int xAxis = tiledLayer.getWidth();
 		int yAxis = tiledLayer.getHeight();
 		for (int i = 0; i < xAxis; i++) {
 			for (int j = 0; j < yAxis; j++) {
 				cell = tiledLayer.getCell(i, j);
 				tile = cell.getTile();
-				mapProps = tile.getProperties();
-				if (mapProps.get("blocked") != null) {
-					blocks.add(new Rectangle(xAxis, yAxis, 16, 16));
+				if (tile.getProperties().get("blocked").equals("true")) {
+					blocks.add(new Rectangle(i, j, 1, 1));
 				}
 			}
 		}
@@ -76,8 +76,7 @@ public class KidVanilla implements ApplicationListener {
 		camera.update();
 		renderer.setView(camera);
 		renderer.render();
-		player.drawPlayer(camera);
-		System.out.println(player.getState() + " " + player.isFacingRight());
+		player.drawPlayer(camera, blocks, debug);
 	}
 	
 	private void handleInput() {
@@ -95,15 +94,28 @@ public class KidVanilla implements ApplicationListener {
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 			player.setY(player.getY() - 0.05f);
 		}
+		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+			if (debug) {
+				debug = false;
+			} else {
+				debug = true;
+			}
+		}
 		if (leftDown) {
-			player.setState(State.WALKING);
 			player.setFacingRight(false);
-			player.setX(player.getX() - 0.1f);
+			if (player.getBound().moveSideways(blocks, -0.1f)) {
+				player.setState(State.WALKING);
+				player.getBound().setX(player.getBound().getX() - 0.1f);
+				player.setX(player.getX() - 0.1f);
+			}
 		}
 		if (rightDown) {
-			player.setState(State.WALKING);
 			player.setFacingRight(true);
-			player.setX(player.getX() + 0.1f);
+			if (player.getBound().moveSideways(blocks, 0.1f)) {
+				player.setState(State.WALKING);
+				player.getBound().setX(player.getBound().getX() + 0.1f);
+				player.setX(player.getX() + 0.1f);
+			}
 		}
 		if (rightDown && leftDown) {
 			player.setState(State.IDLE);
