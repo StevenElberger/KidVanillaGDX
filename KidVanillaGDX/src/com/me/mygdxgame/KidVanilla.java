@@ -17,6 +17,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.me.mygdxgame.Player.State;
 
 public class KidVanilla implements ApplicationListener {
 	private TiledMap map;
@@ -76,6 +77,7 @@ public class KidVanilla implements ApplicationListener {
 		renderer.setView(camera);
 		renderer.render();
 		player.drawPlayer(camera);
+		System.out.println(player.getState() + " " + player.isFacingRight());
 	}
 	
 	private void handleInput() {
@@ -85,17 +87,29 @@ public class KidVanilla implements ApplicationListener {
 		//if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 		//	camera.zoom -= 0.02;
 		//}
+		boolean leftDown = Gdx.input.isKeyPressed(Input.Keys.LEFT);
+		boolean rightDown = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
 			player.setY(player.getY() + 0.05f);
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 			player.setY(player.getY() - 0.05f);
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-			player.setX(player.getX() - 0.05f);
+		if (leftDown) {
+			player.setState(State.WALKING);
+			player.setFacingRight(false);
+			player.setX(player.getX() - 0.1f);
 		}
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-			player.setX(player.getX() + 0.05f);
+		if (rightDown) {
+			player.setState(State.WALKING);
+			player.setFacingRight(true);
+			player.setX(player.getX() + 0.1f);
+		}
+		if (rightDown && leftDown) {
+			player.setState(State.IDLE);
+		}
+		if (!(rightDown) && !(leftDown)) {
+			player.setState(State.IDLE);
 		}
 	}
 

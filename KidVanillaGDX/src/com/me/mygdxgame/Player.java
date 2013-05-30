@@ -12,13 +12,14 @@ public class Player {
 	private float stateTime;
 	//private Vector2 gravity;
 	private Vector2 position;
-	private Animation vanillaWalk;
+	private Animation vanillaWalkLeft, vanillaWalkRight;
 	private Texture vanillaSheet;
-	private TextureRegion[] vanillaFrames;
+	private TextureRegion[] vanillaWalkRightFrames, vanillaWalkLeftFrames;
 	private SpriteBatch spriteBatch;
 	private TextureRegion currentFrame;
 	private float width, height;
 	public State state;
+	private Boolean facingRight;
 	
 	public enum State {
 		IDLE, WALKING, JUMPING
@@ -28,14 +29,26 @@ public class Player {
 		width = 1;
 		height = 1;
 		state = State.IDLE;
-		position = new Vector2(2,94);
+		facingRight = true;
+		position = new Vector2(3,95);
 		vanillaSheet = new Texture(Gdx.files.internal("vanillawalkrightsprite.png"));
 		TextureRegion[][] tmp = TextureRegion.split(vanillaSheet, 16, 16);
-		vanillaFrames = new TextureRegion[3];
-		for (int i = 0; i < 3; i++) {
-			vanillaFrames[i] = tmp[0][i];
-		}
-		vanillaWalk = new Animation(0.025f, vanillaFrames);
+		vanillaWalkRightFrames = new TextureRegion[4];
+		vanillaWalkRightFrames[0] = tmp[0][2];
+		vanillaWalkRightFrames[1] = tmp[0][1];
+		vanillaWalkRightFrames[2] = tmp[0][2];
+		vanillaWalkRightFrames[3] = tmp[0][0];
+		vanillaWalkLeftFrames = new TextureRegion[4];
+		vanillaWalkLeftFrames[0] = new TextureRegion(tmp[0][2]);
+		vanillaWalkLeftFrames[1] = new TextureRegion(tmp[0][1]);
+		vanillaWalkLeftFrames[2] = new TextureRegion(tmp[0][2]);
+		vanillaWalkLeftFrames[3] = new TextureRegion(tmp[0][0]);
+		vanillaWalkLeftFrames[0].flip(true, false);
+		vanillaWalkLeftFrames[1].flip(true, false);
+		vanillaWalkLeftFrames[2].flip(true, false);
+		vanillaWalkLeftFrames[3].flip(true, false);
+		vanillaWalkRight = new Animation(0.1f, vanillaWalkRightFrames);
+		vanillaWalkLeft = new Animation(0.1f, vanillaWalkLeftFrames);
 		spriteBatch = new SpriteBatch();
 		stateTime = 0f;
 		//gravity = new Vector2(0, -2f);
@@ -49,6 +62,10 @@ public class Player {
 		return position.y;
 	}
 	
+	public State getState() {
+		return state;
+	}
+	
 	public void setX(float paramX) {
 		position.x = paramX;
 	}
@@ -57,9 +74,31 @@ public class Player {
 		position.y = paramY;
 	}
 	
+	public void setState(State paramState) {
+		state = paramState;
+	}
+	
+	public void setFacingRight(boolean faceRight) {
+		facingRight = faceRight;
+	}
+	
+	public boolean isFacingRight() {
+		return facingRight;
+	}
+	
 	public void drawPlayer(OrthographicCamera camera) {
 		stateTime += Gdx.graphics.getDeltaTime();
-		currentFrame = vanillaWalk.getKeyFrame(stateTime, true);
+		if (this.state.equals(State.IDLE) && facingRight) {
+			currentFrame = vanillaWalkRightFrames[2];
+		} else if (this.state.equals(State.IDLE) && !facingRight) {
+			currentFrame = vanillaWalkLeftFrames[2];
+		} else if (this.state.equals(State.WALKING) && facingRight) {
+			currentFrame = vanillaWalkRight.getKeyFrame(stateTime, true);
+		} else {
+			currentFrame = vanillaWalkLeft.getKeyFrame(stateTime, true);
+		}
+		
+		//currentFrame = vanillaWalk.getKeyFrame(stateTime, true);
 		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();
 		spriteBatch.draw(currentFrame, position.x, position.y, width, height);
