@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -70,11 +71,11 @@ public class KidVanilla implements ApplicationListener {
 		Gdx.gl.glClearColor(0.7f, 0.7f, 1.0f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		handleInput();
-		//camera.position.set(player.getX(), player.getY(), 0);
+		camera.position.set(player.getX(), player.getY(), 0);
 		camera.update();
 		renderer.setView(camera);
 		renderer.render();
-		player.drawPlayer();
+		player.drawPlayer(camera);
 	}
 	
 	private void handleInput() {
