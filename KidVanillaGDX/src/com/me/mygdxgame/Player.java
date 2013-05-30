@@ -15,7 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player {
 	private float stateTime;
-	private Vector2 gravity;
+	private Vector2 velocity;
 	private Vector2 position;
 	private Animation vanillaWalkLeft, vanillaWalkRight;
 	private Texture vanillaSheet;
@@ -27,6 +27,8 @@ public class Player {
 	private Boolean facingRight;
 	private BoundingBox bound;
 	private ShapeRenderer shapeRenderer;
+	private float gravity, maxvel;
+	private boolean jumping;
 	
 	public enum State {
 		IDLE, WALKING, JUMPING
@@ -37,8 +39,11 @@ public class Player {
 		height = 1;
 		state = State.IDLE;
 		facingRight = true;
+		jumping = false;
+		gravity = -0.1f;
+		maxvel = 0.2f;
 		position = new Vector2(3,95);
-		bound = new BoundingBox(3.1f, 95, 0.8f, 1);
+		bound = new BoundingBox(3.1f, 95, 0.8f, 0.95f);
 		shapeRenderer = new ShapeRenderer();
 		vanillaSheet = new Texture(Gdx.files.internal("vanillawalkrightsprite.png"));
 		TextureRegion[][] tmp = TextureRegion.split(vanillaSheet, 16, 16);
@@ -60,7 +65,15 @@ public class Player {
 		vanillaWalkLeft = new Animation(0.1f, vanillaWalkLeftFrames);
 		spriteBatch = new SpriteBatch();
 		stateTime = 0f;
-		gravity = new Vector2(0, -0.1f);
+		velocity = new Vector2(0, gravity);
+	}
+	
+	public Vector2 getPosition() {
+		return position;
+	}
+	
+	public boolean getJumping() {
+		return jumping;
 	}
 	
 	public float getX() {
@@ -79,7 +92,15 @@ public class Player {
 		return bound;
 	}
 	
-	public Vector2 getGravity() {
+	public Vector2 getVelocity() {
+		return velocity;
+	}
+	
+	public float getMaxVelocity() {
+		return maxvel;
+	}
+	
+	public float getGravity() {
 		return gravity;
 	}
 	
@@ -97,6 +118,10 @@ public class Player {
 	
 	public void setFacingRight(boolean faceRight) {
 		facingRight = faceRight;
+	}
+	
+	public void setJumping(boolean jump) {
+		jumping = jump;
 	}
 	
 	public boolean isFacingRight() {

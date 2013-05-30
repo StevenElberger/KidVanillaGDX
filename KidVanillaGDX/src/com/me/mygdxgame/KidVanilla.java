@@ -88,17 +88,16 @@ public class KidVanilla implements ApplicationListener {
 		//}
 		boolean leftDown = Gdx.input.isKeyPressed(Input.Keys.LEFT);
 		boolean rightDown = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
-		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-			if (player.getBound().moveVertical(blocks, 0.1f)) {
-				player.getBound().setY(player.getBound().getY() + 0.2f);
-				player.setY(player.getY() + 0.2f);
-			}
-		}
 		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			if (debug) {
 				debug = false;
 			} else {
 				debug = true;
+			}
+		}
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+			if ((player.getBound().moveVertical(blocks, 1f)) && !player.getJumping()) {
+				player.setJumping(true);
 			}
 		}
 		if (leftDown) {
@@ -123,9 +122,19 @@ public class KidVanilla implements ApplicationListener {
 		if (!(rightDown) && !(leftDown)) {
 			player.setState(State.IDLE);
 		}
-		if (player.getBound().moveVertical(blocks, player.getGravity().y)) {
-			player.getBound().setY(player.getBound().getY() + player.getGravity().y);
-			player.setY(player.getY() + player.getGravity().y);
+		if (player.getJumping()) {
+			player.getVelocity().y = player.getMaxVelocity();
+		}
+		if (player.getBound().moveVertical(blocks, player.getVelocity().y)) {
+			if (player.getVelocity().y <= player.getGravity()) {
+				player.getVelocity().y = player.getGravity();
+				player.getBound().setY(player.getBound().getY() + player.getVelocity().y);
+				player.getPosition().y += player.getVelocity().y;
+			} else {
+				player.getVelocity().y += player.getGravity();
+				player.getBound().setY(player.getBound().getY() + player.getVelocity().y);
+				player.getPosition().y += player.getVelocity().y;
+			}
 		}
 	}
 
