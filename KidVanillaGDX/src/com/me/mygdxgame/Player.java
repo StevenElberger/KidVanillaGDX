@@ -41,7 +41,7 @@ public class Player {
 		facingRight = true;
 		jumping = false;
 		gravity = -0.1f;
-		maxvel = 0.2f;
+		maxvel = 0.5f;
 		position = new Vector2(3,95);
 		bound = new BoundingBox(3.1f, 95, 0.8f, 0.95f);
 		shapeRenderer = new ShapeRenderer();

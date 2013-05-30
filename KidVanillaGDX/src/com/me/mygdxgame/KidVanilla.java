@@ -41,7 +41,6 @@ public class KidVanilla implements ApplicationListener {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 10, 10);
 		camera.position.set(2, 94, 0);	// Top left corner coords (0, 100)
-		//camera.zoom = .2f;	// Smaller means larger zoom
 	}
 	
 	public void createCollisionArray() {
@@ -72,7 +71,7 @@ public class KidVanilla implements ApplicationListener {
 		Gdx.gl.glClearColor(0.7f, 0.7f, 1.0f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		handleInput();
-		camera.position.set(player.getX(), player.getY(), 0);
+		camera.position.set(player.getX(), 94, 0);
 		camera.update();
 		renderer.setView(camera);
 		renderer.render();
@@ -98,6 +97,7 @@ public class KidVanilla implements ApplicationListener {
 		if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
 			if ((player.getBound().moveVertical(blocks, 1f)) && !player.getJumping()) {
 				player.setJumping(true);
+				player.getVelocity().y = player.getMaxVelocity();
 			}
 		}
 		if (leftDown) {
@@ -122,9 +122,6 @@ public class KidVanilla implements ApplicationListener {
 		if (!(rightDown) && !(leftDown)) {
 			player.setState(State.IDLE);
 		}
-		if (player.getJumping()) {
-			player.getVelocity().y = player.getMaxVelocity();
-		}
 		if (player.getBound().moveVertical(blocks, player.getVelocity().y)) {
 			if (player.getVelocity().y <= player.getGravity()) {
 				player.getVelocity().y = player.getGravity();
@@ -135,6 +132,8 @@ public class KidVanilla implements ApplicationListener {
 				player.getBound().setY(player.getBound().getY() + player.getVelocity().y);
 				player.getPosition().y += player.getVelocity().y;
 			}
+		} else if (player.getVelocity().y == player.getGravity()) {
+			player.setJumping(false);
 		}
 	}
 
