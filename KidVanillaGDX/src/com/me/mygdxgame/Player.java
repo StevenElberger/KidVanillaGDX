@@ -15,7 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player {
 	private float stateTime;
-	//private Vector2 gravity;
+	private Vector2 gravity;
 	private Vector2 position;
 	private Animation vanillaWalkLeft, vanillaWalkRight;
 	private Texture vanillaSheet;
@@ -60,7 +60,7 @@ public class Player {
 		vanillaWalkLeft = new Animation(0.1f, vanillaWalkLeftFrames);
 		spriteBatch = new SpriteBatch();
 		stateTime = 0f;
-		//gravity = new Vector2(0, -2f);
+		gravity = new Vector2(0, -0.1f);
 	}
 	
 	public float getX() {
@@ -77,6 +77,10 @@ public class Player {
 	
 	public BoundingBox getBound() {
 		return bound;
+	}
+	
+	public Vector2 getGravity() {
+		return gravity;
 	}
 	
 	public void setX(float paramX) {

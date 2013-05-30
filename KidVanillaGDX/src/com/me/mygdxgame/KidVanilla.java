@@ -89,10 +89,10 @@ public class KidVanilla implements ApplicationListener {
 		boolean leftDown = Gdx.input.isKeyPressed(Input.Keys.LEFT);
 		boolean rightDown = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 		if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-			player.setY(player.getY() + 0.05f);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-			player.setY(player.getY() - 0.05f);
+			if (player.getBound().moveVertical(blocks, 0.1f)) {
+				player.getBound().setY(player.getBound().getY() + 0.2f);
+				player.setY(player.getY() + 0.2f);
+			}
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			if (debug) {
@@ -122,6 +122,10 @@ public class KidVanilla implements ApplicationListener {
 		}
 		if (!(rightDown) && !(leftDown)) {
 			player.setState(State.IDLE);
+		}
+		if (player.getBound().moveVertical(blocks, player.getGravity().y)) {
+			player.getBound().setY(player.getBound().getY() + player.getGravity().y);
+			player.setY(player.getY() + player.getGravity().y);
 		}
 	}
 

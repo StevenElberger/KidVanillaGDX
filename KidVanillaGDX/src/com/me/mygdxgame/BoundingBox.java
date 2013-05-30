@@ -25,4 +25,16 @@ public class BoundingBox extends Rectangle {
 		this.setX(this.getX() - diffX);
 		return canMove;
 	}
+	
+	public boolean moveVertical(ArrayList<Rectangle> blocks, float diffY) {
+		boolean canMove = true;
+		this.setY(this.getY() + diffY);
+		for (Rectangle rect : blocks) {
+			if (this.overlaps(rect)) {
+				canMove = false;
+			}
+		}
+		this.setY(this.getY() - diffY);	
+		return canMove;
+	}
 }
