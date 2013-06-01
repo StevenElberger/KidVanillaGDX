@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -16,11 +17,14 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.me.mygdxgame.Player.State;
+import com.me.mygdxgame.Player2.States;
 
 public class KidVanilla implements ApplicationListener {
 	private TiledMap map;
 	private Player player;
+	private Player2 player2;
 	private boolean debug;
+	private SpriteBatch spriteBatch;
 	private TiledMapRenderer renderer;
 	private OrthographicCamera camera;
 	private ArrayList<Rectangle> blocks;
@@ -34,6 +38,10 @@ public class KidVanilla implements ApplicationListener {
 		map = new TmxMapLoader().load("data/newmap.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1f / 16f);
 		debug = false;
+		
+		// testing the new player class
+		player2 = new Player2(100, 3, 95, "vanillawalk.png", 4);
+		spriteBatch = new SpriteBatch();
 		
 		// create the player character and load the collision blocks
 		player = new Player();
@@ -80,7 +88,7 @@ public class KidVanilla implements ApplicationListener {
 		// process user input
 		handleInput();
 		// set camera to follow player (needs to be reworked once we get teleporting down
-		camera.position.set(player.getX(), 94, 0);
+		camera.position.set(player2.getPosition().x, 94, 0);
 		// update camera changes
 		camera.update();
 		// set the camera's view to the map
@@ -88,7 +96,11 @@ public class KidVanilla implements ApplicationListener {
 		// draw the map
 		renderer.render();
 		// draw the player
-		player.drawPlayer(camera, blocks, debug);
+		spriteBatch.setProjectionMatrix(camera.combined);
+		spriteBatch.begin();
+		spriteBatch.draw(player2.getFrame(), player2.getPosition().x, player2.getPosition().y, 1, 1);
+		spriteBatch.end();
+		//player.drawPlayer(camera, blocks, debug);
 	}
 	
 	private void handleInput() {
@@ -108,40 +120,74 @@ public class KidVanilla implements ApplicationListener {
 		// if player pressed space and the player can move 1 block upward
 		// and isn't still jumping, then set his y velocity to maximum
 		if (spaceDown) {
+			if (player2.canMoveVertical(blocks, 1f)) {
+				player2.setJump(true);
+				player2.getVelocity().y = player2.getMaxVel();
+			}
+			/*
 			if ((player.getBound().moveVertical(blocks, 1f)) && !player.getJumping()) {
 				player.setJumping(true);
 				player.getVelocity().y = player.getMaxVelocity();
 			}
+			*/
 		}
 		// if player pressed left and the player can move .1 blocks left
 		// set state to walking to show walking animation and move player left
 		if (leftDown) {
+			player2.setFacingRight(false);
+			if (player2.canMoveLeft(blocks)) {
+				player2.moveLeft();
+				player2.setState(States.WALKING);
+			}
+			/*
 			player.setFacingRight(false);
 			if (player.getBound().moveSideways(blocks, -0.1f)) {
 				player.setState(State.WALKING);
 				player.getBound().setX(player.getBound().getX() - 0.1f);
 				player.setX(player.getX() - 0.1f);
 			}
+			*/
 		}
 		// if player pressed right and the player can move .1 blocks right
 		// set state to walking to show walking animation and move player right
 		if (rightDown) {
+			player2.setFacingRight(true);
+			if (player2.canMoveRight(blocks)) {
+				player2.moveRight();
+				player2.setState(States.WALKING);
+			}
+			/*
 			player.setFacingRight(true);
 			if (player.getBound().moveSideways(blocks, 0.1f)) {
 				player.setState(State.WALKING);
 				player.getBound().setX(player.getBound().getX() + 0.1f);
 				player.setX(player.getX() + 0.1f);
 			}
+			*/
 		}
 		// if player pressed both left and right, set player to idle
 		if (rightDown && leftDown) {
-			player.setState(State.IDLE);
+			player2.setState(States.IDLE);
+			//player.setState(State.IDLE);
 		}
 		// if player hasn't pressed left or right, set player to idle
 		if (!(rightDown) && !(leftDown)) {
-			player.setState(State.IDLE);
+			player2.setState(States.IDLE);
+			//player.setState(State.IDLE);
 		}
 		// if player can move in the y direction, apply gravity to y velocity
+		if (player2.canMoveVertical(blocks, player2.getVelocity().y)) {
+			if (player2.getVelocity().y <= player2.getGravity()) {
+				player2.getVelocity().y = player2.getGravity();
+				player2.moveVertical(player2.getVelocity().y);
+			} else {
+				player2.getVelocity().y += player2.getGravity();
+				player2.moveVertical(player2.getVelocity().y);
+			}
+		} else if (player2.getVelocity().y == player2.getGravity()) {
+			player2.setJump(false);
+		}
+		/*
 		if (player.getBound().moveVertical(blocks, player.getVelocity().y)) {
 			if (player.getVelocity().y <= player.getGravity()) {
 				player.getVelocity().y = player.getGravity();
@@ -156,6 +202,7 @@ public class KidVanilla implements ApplicationListener {
 		} else if (player.getVelocity().y == player.getGravity()) {
 			player.setJumping(false);
 		}
+		*/
 	}
 
 	@Override
