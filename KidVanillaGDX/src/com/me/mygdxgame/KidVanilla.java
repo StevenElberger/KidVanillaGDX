@@ -46,6 +46,10 @@ public class KidVanilla implements ApplicationListener {
 	}
 	
 	public void createCollisionArray() {
+		// tiledMap > tiledLayer > Cell > Tile
+		// for every tile that has a blocked property that equals true
+		// add it to the array list of blocks we will use for collision detection
+		// note: every tile in the map must have a blocked property!
 		Cell cell;
 		TiledMapTile tile;
 		blocks = new ArrayList<Rectangle>();
@@ -70,21 +74,30 @@ public class KidVanilla implements ApplicationListener {
 
 	@Override
 	public void render() {
+		// clear screen to avoid blipping
 		Gdx.gl.glClearColor(0.7f, 0.7f, 1.0f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		// process user input
 		handleInput();
+		// set camera to follow player (needs to be reworked once we get teleporting down
 		camera.position.set(player.getX(), 94, 0);
+		// update camera changes
 		camera.update();
+		// set the camera's view to the map
 		renderer.setView(camera);
+		// draw the map
 		renderer.render();
+		// draw the player
 		player.drawPlayer(camera, blocks, debug);
 	}
 	
 	private void handleInput() {
+		// create booleans that determine whether a key was pressed
 		boolean leftDown = Gdx.input.isKeyPressed(Input.Keys.LEFT);
 		boolean rightDown = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 		boolean spaceDown = Gdx.input.isKeyPressed(Input.Keys.SPACE);
 		boolean dDown = Gdx.input.isKeyPressed(Input.Keys.D);
+		// if player pressed d, toggle debug mode
 		if (dDown) {
 			if (debug) {
 				debug = false;
@@ -92,12 +105,16 @@ public class KidVanilla implements ApplicationListener {
 				debug = true;
 			}
 		}
+		// if player pressed space and the player can move 1 block upward
+		// and isn't still jumping, then set his y velocity to maximum
 		if (spaceDown) {
 			if ((player.getBound().moveVertical(blocks, 1f)) && !player.getJumping()) {
 				player.setJumping(true);
 				player.getVelocity().y = player.getMaxVelocity();
 			}
 		}
+		// if player pressed left and the player can move .1 blocks left
+		// set state to walking to show walking animation and move player left
 		if (leftDown) {
 			player.setFacingRight(false);
 			if (player.getBound().moveSideways(blocks, -0.1f)) {
@@ -106,6 +123,8 @@ public class KidVanilla implements ApplicationListener {
 				player.setX(player.getX() - 0.1f);
 			}
 		}
+		// if player pressed right and the player can move .1 blocks right
+		// set state to walking to show walking animation and move player right
 		if (rightDown) {
 			player.setFacingRight(true);
 			if (player.getBound().moveSideways(blocks, 0.1f)) {
@@ -114,12 +133,15 @@ public class KidVanilla implements ApplicationListener {
 				player.setX(player.getX() + 0.1f);
 			}
 		}
+		// if player pressed both left and right, set player to idle
 		if (rightDown && leftDown) {
 			player.setState(State.IDLE);
 		}
+		// if player hasn't pressed left or right, set player to idle
 		if (!(rightDown) && !(leftDown)) {
 			player.setState(State.IDLE);
 		}
+		// if player can move in the y direction, apply gravity to y velocity
 		if (player.getBound().moveVertical(blocks, player.getVelocity().y)) {
 			if (player.getVelocity().y <= player.getGravity()) {
 				player.getVelocity().y = player.getGravity();
@@ -130,6 +152,7 @@ public class KidVanilla implements ApplicationListener {
 				player.getBound().setY(player.getBound().getY() + player.getVelocity().y);
 				player.getPosition().y += player.getVelocity().y;
 			}
+			// if player's y velocity is equal to gravity, he can jump again
 		} else if (player.getVelocity().y == player.getGravity()) {
 			player.setJumping(false);
 		}
