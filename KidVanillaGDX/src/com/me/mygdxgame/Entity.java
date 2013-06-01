@@ -21,12 +21,12 @@ public class Entity {
 	public Entity() {
 	}
 	
-	public Entity(int hp, int x, int y, String sheetLocation, int frames) {
+	public Entity(int hp, int x, int y, String sheetLocation, int frames, float width, float height) {
 		// Set up health, position, and bounding box
 		health = hp;
 		stateTime = 0f;
 		position = new Vector2(x, y);
-		bound = new BoundingBox(x, y, 1, 1);
+		bound = new BoundingBox(x + 0.1f, y, width, height);
 		
 		// Load up the sprite sheet
 		spriteSheet = new Texture(Gdx.files.internal(sheetLocation));
@@ -57,10 +57,6 @@ public class Entity {
 		return stateTime;
 	}
 	
-	public void addStateTime(float delta) {
-		stateTime += delta;
-	}
-	
 	public Vector2 getPosition() {
 		return position;
 	}
@@ -69,31 +65,8 @@ public class Entity {
 		return bound;
 	}
 	
-	public boolean canMoveLeft(ArrayList<Rectangle> blocks) {
-		return bound.moveSideways(blocks, -0.1f);
-	}
-	
-	public boolean canMoveRight(ArrayList<Rectangle> blocks) {
-		return bound.moveSideways(blocks, 0.1f);
-	}
-	
-	public boolean canMoveVertical(ArrayList<Rectangle> blocks, float diffY) {
-		return bound.moveVertical(blocks, diffY);
-	}
-	
-	public void moveLeft() {
-		bound.x -= 0.1f;
-		position.x -= 0.1f;
-	}
-	
-	public void moveRight() {
-		bound.x += 0.1f;
-		position.x += 0.1f;
-	}
-	
-	public void moveVertical(float diffY) {
-		bound.y += diffY;
-		position.y += diffY;
+	public void addStateTime(float delta) {
+		stateTime += delta;
 	}
 	
 	public TextureRegion getLeftFrame() {
@@ -112,11 +85,38 @@ public class Entity {
 		return moveRight;
 	}
 	
+	public TextureRegion getCurrentFrame() {
+		return currentFrame;
+	}
+	
+	public void moveLeft() {
+		bound.x -= 0.1f;
+		position.x -= 0.1f;
+	}
+	
+	public void moveRight() {
+		bound.x += 0.1f;
+		position.x += 0.1f;
+	}
+	
+	public void moveVertical(float diffY) {
+		bound.y += diffY;
+		position.y += diffY;
+	}
+	
 	public void setCurrentFrame(TextureRegion paramCurrentFrame) {
 		currentFrame = paramCurrentFrame;
 	}
 	
-	public TextureRegion getCurrentFrame() {
-		return currentFrame;
+	public boolean canMoveLeft(ArrayList<Rectangle> blocks) {
+		return bound.moveSideways(blocks, -0.1f);
+	}
+	
+	public boolean canMoveRight(ArrayList<Rectangle> blocks) {
+		return bound.moveSideways(blocks, 0.1f);
+	}
+	
+	public boolean canMoveVertical(ArrayList<Rectangle> blocks, float diffY) {
+		return bound.moveVertical(blocks, diffY);
 	}
 }
