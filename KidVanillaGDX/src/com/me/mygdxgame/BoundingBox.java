@@ -1,7 +1,6 @@
 package com.me.mygdxgame;
 
 import java.util.ArrayList;
-
 import com.badlogic.gdx.math.Rectangle;
 
 @SuppressWarnings("serial")
