@@ -22,6 +22,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 
 public class KidVanilla implements ApplicationListener {
+	private Blob blob;
 	private TiledMap map;
 	private Player player;
 	private boolean debug;
@@ -39,6 +40,7 @@ public class KidVanilla implements ApplicationListener {
 		debug = false;
 		
 		// testing the new player class
+		blob = new Blob(100, 7, 95, "blobsheet.png", 10, 0.8f, 0.95f);
 		player = new Player(100, 3, 95, "vanillawalk.png", 4, 0.8f, 0.95f);
 		spriteBatch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
@@ -107,6 +109,7 @@ public class KidVanilla implements ApplicationListener {
 		// draw the player
 		spriteBatch.setProjectionMatrix(camera.combined);
 		spriteBatch.begin();
+		spriteBatch.draw(blob.getFrame(), blob.getPosition().x, blob.getPosition().y, 1, 1);
 		spriteBatch.draw(player.getFrame(), player.getPosition().x, player.getPosition().y, 1, 1);
 		spriteBatch.end();
 		//player.drawPlayer(camera, blocks, debug);
