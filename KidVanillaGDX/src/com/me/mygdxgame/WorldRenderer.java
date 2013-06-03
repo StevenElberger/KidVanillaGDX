@@ -17,6 +17,7 @@ public class WorldRenderer {
 	}
 	
 	public void renderWorld(OrthographicCamera cam, Player player, ArrayList<Rectangle> blocks, ArrayList<Entity> entityList, boolean debug) {
+		// if debug mode is on, draw bounding boxes
 		if (debug) {
 			shapeRenderer.setProjectionMatrix(cam.combined);
 			shapeRenderer.begin(ShapeType.Line);
@@ -27,6 +28,7 @@ public class WorldRenderer {
 			shapeRenderer.end();
 		}
 		
+		// draw all entities and the player
 		spriteBatch.setProjectionMatrix(cam.combined);
 		spriteBatch.begin();
 		for (Entity ent : entityList) {

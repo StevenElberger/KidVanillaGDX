@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Entity {
-	private int health;
+	//private int health; -- add in when we get to combat!
 	private State state;
 	private float stateTime;
 	private Vector2 position;
@@ -28,8 +28,8 @@ public class Entity {
 	}
 	
 	public Entity(int hp, int x, int y, String sheetLocation, int frames, float width, float height) {
-		// Set up health, position, and bounding box
-		health = hp;
+		// Set up stats
+		//health = hp;
 		stateTime = 0f;
 		facingRight = true;
 		state = State.IDLE;
@@ -57,58 +57,6 @@ public class Entity {
 		moveRight = new Animation(0.1f, moveRightFrames);
 	}
 	
-	public int getHealth() {
-		return health;
-	}
-	
-	public State getState() {
-		return state;
-	}
-	
-	public boolean isFacingRight() {
-		return facingRight;
-	}
-	
-	public void setState(State paramState) {
-		state = paramState;
-	}
-	
-	public float getStateTime() {
-		return stateTime;
-	}
-	
-	public Vector2 getPosition() {
-		return position;
-	}
-	
-	public BoundingBox getBound() {
-		return bound;
-	}
-	
-	public void addStateTime(float delta) {
-		stateTime += delta;
-	}
-	
-	public TextureRegion getLeftFrame() {
-		return moveLeftFrames[0];
-	}
-	
-	public TextureRegion getRightFrame() {
-		return moveRightFrames[0];
-	}
-	
-	public Animation getLeftAnimation() {
-		return moveLeft;
-	}
-	
-	public Animation getRightAnimation() {
-		return moveRight;
-	}
-	
-	public TextureRegion getCurrentFrame() {
-		return currentFrame;
-	}
-	
 	public void moveLeft() {
 		state = State.WALKING;
 		facingRight = false;
@@ -123,27 +71,29 @@ public class Entity {
 		position.x += 0.1f;
 	}
 	
+	public State getState() {
+		return state;
+	}
+	
+	public boolean isFacingRight() {
+		return facingRight;
+	}
+	
+	public Vector2 getPosition() {
+		return position;
+	}
+	
+	public BoundingBox getBound() {
+		return bound;
+	}
+	
 	public void moveVertical(float diffY) {
 		bound.y += diffY;
 		position.y += diffY;
 	}
 	
-	public TextureRegion getFrame() {
-		stateTime += Gdx.graphics.getDeltaTime();
-		if (this.state.equals(State.IDLE) && facingRight) {
-			currentFrame = moveRightFrames[0];
-		} else if (this.state.equals(State.IDLE) && !facingRight) {
-			currentFrame = moveLeftFrames[0];
-		} else if (this.state.equals(State.WALKING) && facingRight) {
-			currentFrame = moveRight.getKeyFrame(stateTime, true);
-		} else if (this.state.equals(State.WALKING) && !facingRight) {
-			currentFrame = moveLeft.getKeyFrame(stateTime, true);
-		}
-		return currentFrame;
-	}
-	
-	public void setCurrentFrame(TextureRegion paramCurrentFrame) {
-		currentFrame = paramCurrentFrame;
+	public void setState(State paramState) {
+		state = paramState;
 	}
 	
 	public boolean canMoveLeft(ArrayList<Rectangle> blocks) {
@@ -156,5 +106,21 @@ public class Entity {
 	
 	public boolean canMoveVertical(ArrayList<Rectangle> blocks, float diffY) {
 		return bound.moveVertical(blocks, diffY);
+	}
+	
+	// Decide on which frame or animation to use depending upon
+	// the state of the entity, then return it
+	public TextureRegion getFrame() {
+		stateTime += Gdx.graphics.getDeltaTime();
+		if (this.state.equals(State.IDLE) && facingRight) {
+			currentFrame = moveRightFrames[0];
+		} else if (this.state.equals(State.IDLE) && !facingRight) {
+			currentFrame = moveLeftFrames[0];
+		} else if (this.state.equals(State.WALKING) && facingRight) {
+			currentFrame = moveRight.getKeyFrame(stateTime, true);
+		} else if (this.state.equals(State.WALKING) && !facingRight) {
+			currentFrame = moveLeft.getKeyFrame(stateTime, true);
+		}
+		return currentFrame;
 	}
 }
