@@ -10,13 +10,19 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Entity {
 	private int health;
+	private State state;
 	private float stateTime;
 	private Vector2 position;
 	private BoundingBox bound;
+	private boolean facingRight;
 	private Texture spriteSheet;
 	private TextureRegion currentFrame;
 	private Animation moveLeft, moveRight;
 	private TextureRegion[] moveLeftFrames, moveRightFrames;
+	
+	public enum State {
+		IDLE, WALKING, JUMPING;
+	}
 	
 	public Entity() {
 	}
@@ -25,6 +31,8 @@ public class Entity {
 		// Set up health, position, and bounding box
 		health = hp;
 		stateTime = 0f;
+		facingRight = true;
+		state = State.IDLE;
 		position = new Vector2(x, y);
 		bound = new BoundingBox(x + 0.1f, y, width, height);
 		
@@ -51,6 +59,18 @@ public class Entity {
 	
 	public int getHealth() {
 		return health;
+	}
+	
+	public State getState() {
+		return state;
+	}
+	
+	public boolean isFacingRight() {
+		return facingRight;
+	}
+	
+	public void setState(State paramState) {
+		state = paramState;
 	}
 	
 	public float getStateTime() {
@@ -90,11 +110,15 @@ public class Entity {
 	}
 	
 	public void moveLeft() {
+		state = State.WALKING;
+		facingRight = false;
 		bound.x -= 0.1f;
 		position.x -= 0.1f;
 	}
 	
 	public void moveRight() {
+		state = State.WALKING;
+		facingRight = true;
 		bound.x += 0.1f;
 		position.x += 0.1f;
 	}
@@ -102,6 +126,20 @@ public class Entity {
 	public void moveVertical(float diffY) {
 		bound.y += diffY;
 		position.y += diffY;
+	}
+	
+	public TextureRegion getFrame() {
+		stateTime += Gdx.graphics.getDeltaTime();
+		if (this.state.equals(State.IDLE) && facingRight) {
+			currentFrame = moveRightFrames[0];
+		} else if (this.state.equals(State.IDLE) && !facingRight) {
+			currentFrame = moveLeftFrames[0];
+		} else if (this.state.equals(State.WALKING) && facingRight) {
+			currentFrame = moveRight.getKeyFrame(stateTime, true);
+		} else if (this.state.equals(State.WALKING) && !facingRight) {
+			currentFrame = moveLeft.getKeyFrame(stateTime, true);
+		}
+		return currentFrame;
 	}
 	
 	public void setCurrentFrame(TextureRegion paramCurrentFrame) {

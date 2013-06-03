@@ -5,19 +5,16 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL10;
-import com.me.mygdxgame.Player.State;
+import com.me.mygdxgame.Entity.State;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 
@@ -26,11 +23,11 @@ public class KidVanilla implements ApplicationListener {
 	private TiledMap map;
 	private Player player;
 	private boolean debug;
-	private SpriteBatch spriteBatch;
 	private TiledMapRenderer renderer;
 	private OrthographicCamera camera;
+	private WorldRenderer worldRenderer;
 	private ArrayList<Rectangle> blocks;
-	private ShapeRenderer shapeRenderer;
+	private ArrayList<Entity> entityList;
 	
 	@Override
 	public void create() {				
@@ -42,8 +39,11 @@ public class KidVanilla implements ApplicationListener {
 		// testing the new player class
 		blob = new Blob(100, 7, 95, "blobsheet.png", 10, 0.8f, 0.95f);
 		player = new Player(100, 3, 95, "vanillawalk.png", 4, 0.8f, 0.95f);
-		spriteBatch = new SpriteBatch();
-		shapeRenderer = new ShapeRenderer();
+		
+		// testing crap
+		entityList = new ArrayList<Entity>();
+		entityList.add(blob);
+		worldRenderer = new WorldRenderer();
 		
 		// create the player character and load the collision blocks
 		createCollisionArray();
@@ -84,7 +84,7 @@ public class KidVanilla implements ApplicationListener {
 	@Override
 	public void render() {
 		// clear screen to avoid blipping
-		Gdx.gl.glClearColor(0.7f, 0.7f, 1.0f, 1);
+		//Gdx.gl.glClearColor(0.7f, 0.7f, 1.0f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		// process user input
 		handleInput();
@@ -97,22 +97,7 @@ public class KidVanilla implements ApplicationListener {
 		// draw the map
 		renderer.render();
 		// if debug mode is on, draw collision boundaries
-		if (debug) {
-			shapeRenderer.setProjectionMatrix(camera.combined);
-			shapeRenderer.begin(ShapeType.Line);
-			shapeRenderer.rect(player.getBound().x, player.getBound().y, player.getBound().width, player.getBound().height);
-			for (Rectangle rect : blocks) {
-				shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
-			}
-			shapeRenderer.end();
-		}
-		// draw the player
-		spriteBatch.setProjectionMatrix(camera.combined);
-		spriteBatch.begin();
-		spriteBatch.draw(blob.getFrame(), blob.getPosition().x, blob.getPosition().y, 1, 1);
-		spriteBatch.draw(player.getFrame(), player.getPosition().x, player.getPosition().y, 1, 1);
-		spriteBatch.end();
-		//player.drawPlayer(camera, blocks, debug);
+		worldRenderer.renderWorld(camera, player, blocks, entityList, debug);
 	}
 	
 	private void handleInput() {
@@ -140,19 +125,15 @@ public class KidVanilla implements ApplicationListener {
 		// if player pressed left and the player can move .1 blocks left
 		// set state to walking to show walking animation and move player left
 		if (leftDown) {
-			player.setFacingRight(false);
 			if (player.canMoveLeft(blocks)) {
 				player.moveLeft();
-				player.setState(State.WALKING);
 			}
 		}
 		// if player pressed right and the player can move .1 blocks right
 		// set state to walking to show walking animation and move player right
 		if (rightDown) {
-			player.setFacingRight(true);
 			if (player.canMoveRight(blocks)) {
 				player.moveRight();
-				player.setState(State.WALKING);
 			}
 		}
 		// if player pressed both left and right, set player to idle
