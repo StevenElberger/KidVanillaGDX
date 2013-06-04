@@ -2,10 +2,16 @@ package com.me.mygdxgame;
 
 import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
+
+// import box2dLight.PointLight; --- used for testing lighting
+//import box2dLight.RayHandler; // used for testing lighting
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL10;
+//import com.badlogic.gdx.math.Vector2; // used for testing lighting
 import com.me.mygdxgame.Entity.State;
+//import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.math.Rectangle;
+//import com.badlogic.gdx.physics.box2d.World; // used for testing lighting
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -22,6 +28,8 @@ public class KidVanilla implements ApplicationListener {
 	private TiledMap map;
 	private Player player;
 	private boolean debug;
+	//private World world; -- used for lighting
+	//private RayHandler rayHandler;
 	private TiledMapRenderer renderer;
 	private OrthographicCamera camera;
 	private WorldRenderer worldRenderer;
@@ -51,6 +59,14 @@ public class KidVanilla implements ApplicationListener {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 10, 10);
 		camera.position.set(2, 94, 0);	// Top left corner is (0, 100)
+		
+		// testing lighting
+		/*
+		world = new World(new Vector2(), true);
+		rayHandler = new RayHandler(world);
+		rayHandler.setCombinedMatrix(camera.combined);
+		//new PointLight(rayHandler, 128, new Color(0, 0, 0, 0), 1, 3, 95);
+		*/
 	}
 	
 	public void createCollisionArray() {
@@ -78,6 +94,7 @@ public class KidVanilla implements ApplicationListener {
 	@Override
 	public void dispose() {
 		map.dispose();
+		//rayHandler.dispose();
 	}
 
 	@Override
@@ -97,6 +114,8 @@ public class KidVanilla implements ApplicationListener {
 		renderer.render();
 		// if debug mode is on, draw collision boundaries
 		worldRenderer.renderWorld(camera, player, blocks, entityList, debug);
+		// ----light tests
+		// rayHandler.updateAndRender();
 	}
 	
 	private void handleInput() {
