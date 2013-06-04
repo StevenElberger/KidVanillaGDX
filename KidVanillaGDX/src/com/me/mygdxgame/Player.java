@@ -11,8 +11,8 @@ public class Player extends Entity {
 	public Player() {
 	}
 	
-	public Player(int hp, int x, int y, String sheetLocation, int frames, float width, float height) {
-		super(hp, x, y, sheetLocation, frames, width, height);
+	public Player(int hp, int x, int y, String moveSheetLocation, String attackSheetLocation, int frames, float width, float height) {
+		super(hp, x, y, moveSheetLocation, attackSheetLocation, frames, width, height);
 		maxvel = 0.65f;
 		gravity = -0.1f;
 		canJump = false;

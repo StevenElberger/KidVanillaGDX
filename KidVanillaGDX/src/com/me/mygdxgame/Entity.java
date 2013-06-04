@@ -17,17 +17,17 @@ public class Entity {
 	private boolean facingRight;
 	private Texture spriteSheet;
 	private TextureRegion currentFrame;
-	private Animation moveLeft, moveRight;
-	private TextureRegion[] moveLeftFrames, moveRightFrames;
+	private Animation moveLeft, moveRight, attackLeft, attackRight;
+	private TextureRegion[] moveLeftFrames, moveRightFrames, attackLeftFrames, attackRightFrames;
 	
 	public enum State {
-		IDLE, WALKING, JUMPING;
+		IDLE, WALKING, JUMPING, ATTACKING;
 	}
 	
 	public Entity() {
 	}
 	
-	public Entity(int hp, int x, int y, String sheetLocation, int frames, float width, float height) {
+	public Entity(int hp, int x, int y, String moveSheetLocation, String attackSheetLocation, int frames, float width, float height) {
 		// Set up stats
 		//health = hp;
 		stateTime = 0f;
@@ -37,7 +37,7 @@ public class Entity {
 		bound = new BoundingBox(x + 0.1f, y, width, height);
 		
 		// Load up the sprite sheet
-		spriteSheet = new Texture(Gdx.files.internal(sheetLocation));
+		spriteSheet = new Texture(Gdx.files.internal(moveSheetLocation));
 		// Split up the sprite sheet
 		TextureRegion[][] tmp = TextureRegion.split(spriteSheet, 16, 16);
 		// Create the texture regions to hold each frame of the animation
@@ -51,6 +51,22 @@ public class Entity {
 		for (int j = 0; j < frames; j++) {
 			moveRightFrames[j] = new TextureRegion(tmp[0][j]);
 			moveRightFrames[j].flip(true, false);
+		}
+		
+		// Load up the sprite sheet with the attack animations
+		if (!attackSheetLocation.equals("")) {
+			spriteSheet = new Texture(Gdx.files.internal(attackSheetLocation));
+			TextureRegion[][] tmp2 = TextureRegion.split(spriteSheet, 16, 16);
+			attackLeftFrames = new TextureRegion[frames];
+			attackRightFrames = new TextureRegion[frames];
+			
+			for (int i = 0; i < frames; i++) {
+				attackLeftFrames[i] = tmp2[0][i];
+				attackRightFrames[i] = new TextureRegion(tmp2[0][i]);
+				attackRightFrames[i].flip(true, false);
+			}
+			attackLeft = new Animation(0.1f, attackLeftFrames);
+			attackRight = new Animation(0.1f, attackRightFrames);
 		}
 		// Create the animations
 		moveLeft = new Animation(0.1f, moveLeftFrames);
@@ -120,6 +136,10 @@ public class Entity {
 			currentFrame = moveRight.getKeyFrame(stateTime, true);
 		} else if (this.state.equals(State.WALKING) && !facingRight) {
 			currentFrame = moveLeft.getKeyFrame(stateTime, true);
+		} else if (this.state.equals(State.ATTACKING) && facingRight) {
+			currentFrame = attackRight.getKeyFrame(stateTime, true);
+		} else if (this.state.equals(State.ATTACKING) && !facingRight) {
+			currentFrame = attackLeft.getKeyFrame(stateTime, true);
 		}
 		return currentFrame;
 	}

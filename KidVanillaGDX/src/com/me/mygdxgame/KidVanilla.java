@@ -36,8 +36,8 @@ public class KidVanilla implements ApplicationListener {
 		debug = false;
 		
 		// testing the new player class
-		blob = new Blob(100, 7, 95, "blobsheet.png", 10, 0.8f, 0.95f);
-		player = new Player(100, 3, 95, "vanillawalk.png", 4, 0.8f, 0.95f);
+		blob = new Blob(100, 7, 95, "blobsheet.png", "", 10, 0.8f, 0.95f);
+		player = new Player(100, 3, 95, "vanillawalk.png", "staplesprite.png", 4, 0.8f, 0.95f);
 		
 		// testing crap
 		entityList = new ArrayList<Entity>();
@@ -105,6 +105,7 @@ public class KidVanilla implements ApplicationListener {
 		boolean rightDown = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
 		boolean spaceDown = Gdx.input.isKeyPressed(Input.Keys.SPACE);
 		boolean dDown = Gdx.input.isKeyPressed(Input.Keys.D);
+		boolean aDown = Gdx.input.isKeyPressed(Input.Keys.A);
 		// if player pressed d, toggle debug mode
 		if (dDown) {
 			if (debug) {
@@ -112,6 +113,10 @@ public class KidVanilla implements ApplicationListener {
 			} else {
 				debug = true;
 			}
+		}
+		// if player pressed a, attack
+		if (aDown && !leftDown && !rightDown && !spaceDown) {
+			player.setState(State.ATTACKING);
 		}
 		// if player pressed space and the player can move 1 block upward
 		// and isn't still jumping, then set his y velocity to maximum
@@ -141,7 +146,11 @@ public class KidVanilla implements ApplicationListener {
 		}
 		// if player hasn't pressed left or right, set player to idle
 		if (!(rightDown) && !(leftDown)) {
-			player.setState(State.IDLE);
+			if (!spaceDown && aDown) {
+				player.setState(State.ATTACKING);
+			} else {
+				player.setState(State.IDLE);
+			}
 		}
 		// if player can move in the y direction, apply gravity to y velocity
 		if (player.canMoveVertical(blocks, player.getVelocity().y)) {
